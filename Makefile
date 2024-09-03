@@ -6,9 +6,9 @@ NAME = libft_malloc_$(HOSTTYPE).so
 
 L_NAME = libft_malloc.so
 
-CC = clang
+CC = cc
 
-CCFLAGS = -Wall -Wextra -Werror -fPIC -fvisibility=hidden
+CCFLAGS = -Wall -Wextra -Werror -fPIC
 
 SRC_PATH = ./src
 
@@ -24,7 +24,7 @@ SRC_INCLUDE = $(SRC_PATH)
 
 INC = $(addprefix -I, $(LIBFT_INCLUDE) $(SRC_INCLUDE))
 
-SRC = $(addprefix $(SRC_PATH)/, malloc.c)
+SRC = $(addprefix $(SRC_PATH)/, malloc.c free.c realloc.c)
 
 OBJ = $(SRC:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
 
@@ -39,6 +39,7 @@ $(LIBFT):
 
 $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
 	$(CC) $(CCFLAGS) $(INC) -c $< -o $@
+
 
 creat_obj_dir:
 	@if [ ! -d $(OBJ_PATH) ]; then mkdir $(OBJ_PATH); fi
