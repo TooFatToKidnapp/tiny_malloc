@@ -17,4 +17,4 @@ cc -Wall -Wextra -Werror -std=c90 -I ../src/include -I ../libft main.c -L ../ -l
 
 ./main
 
-
+rm main

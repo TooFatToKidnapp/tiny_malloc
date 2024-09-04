@@ -12,8 +12,8 @@
 int main() {
   char * ptr = malloc(10);
   if (ptr == NULL) {
-    printf("PTR == NULL");
+    printf("PTR == NULL\n");
   }
-  example_fn();
+
   return 0;
 }

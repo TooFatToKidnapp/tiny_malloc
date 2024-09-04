@@ -24,7 +24,7 @@ SRC_INCLUDE = $(SRC_PATH)
 
 INC = $(addprefix -I, $(LIBFT_INCLUDE) $(SRC_INCLUDE))
 
-SRC = $(addprefix $(SRC_PATH)/, malloc.c free.c realloc.c)
+SRC = $(addprefix $(SRC_PATH)/, malloc.c free.c realloc.c init.c)
 
 OBJ = $(SRC:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
 
