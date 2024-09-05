@@ -10,7 +10,7 @@
 */
 
 int main() {
-  char * ptr = malloc(10);
+  char * ptr = malloc(1);
   if (ptr == NULL) {
     printf("PTR == NULL\n");
   }

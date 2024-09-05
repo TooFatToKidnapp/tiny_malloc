@@ -3,10 +3,18 @@
 
 #include <unistd.h>
 #include <stddef.h>
+#include <sys/mman.h>
 #include "../../libft/libft.h"
 
-#define TINY_ZONE 13
-#define SMALL_ZONE 126
+// #define TINY_ZONE 13
+// #define SMALL_ZONE 126
+#define TINY_ZONE 5
+#define SMALL_ZONE 150
+
+#define INFO(format, ...) \
+    fprintf(stderr, "---- %s:%d: ------\n", __FILE__, __LINE__); \
+    fprintf(stderr, format, __VA_ARGS__); \
+    fprintf(stderr, "------------------\n");
 
 typedef enum zone {tiny, small, large} e_zone;
 
@@ -34,13 +42,15 @@ typedef struct s_pool {
 
 extern t_pool g_mem_pool;
 
-
 void free(void *ptr);
 void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
 
 
-void _init_global_mem_pool();
-e_zone _set_zone_type(size_t size);
+void          _init_global_mem_pool();
+e_zone        _set_zone_type(size_t size);
+t_zone_info*  _get_alloc_zone(size_t size, e_zone zone_type);
+void*         _create_alloc_zone(size_t size, e_zone zone_type);
+void          _push_back_new_zone(t_zone_info *zone);
 
 #endif

@@ -8,7 +8,7 @@ L_NAME = libft_malloc.so
 
 CC = cc
 
-CCFLAGS = -Wall -Wextra -Werror -fPIC
+CCFLAGS = -pedantic -std=c99 -Wall -Wextra -Werror -fPIC
 
 SRC_PATH = ./src
 
