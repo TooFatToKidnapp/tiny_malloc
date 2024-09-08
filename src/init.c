@@ -103,4 +103,26 @@ void _push_back_new_zone(t_zone_info *zone) {
   return;
 }
 
+t_alloc_info *_set_new_alloc(size_t size, t_alloc_info * head, t_alloc_info* next, t_alloc_info* prev ) {
+  t_alloc_info new_alloc = {next, prev, head + 1, size, size};
+  ft_memcpy(head, &new_alloc, sizeof(*head));
+  return head;
+}
 
+void _update_free_mem_size( size_t zone_size, t_zone_info *zone) {
+  t_alloc_info *head = zone->alloc_pool;
+  long new_free_size = 0;
+  ptrdiff_t offset = 0;
+
+  if (head == NULL) {
+    zone->free_mem_size = zone_size - sizeof(t_alloc_info);
+  } else {
+    for (; head->next; head = head->next) {
+      offset = (char*)head->next - (char*)(head->chunk + zone_size);
+      new_free_size = (new_free_size * (offset <= new_free_size)) + (offset * (offset > new_free_size));
+    }
+    offset = ((char *)zone + zone_size) - (char*)(head->chunk + zone_size);
+    new_free_size = (new_free_size * (offset <= new_free_size)) + (offset * (offset > new_free_size));
+    zone->free_mem_size = new_free_size;
+  }
+}

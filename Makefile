@@ -6,9 +6,9 @@ NAME = libft_malloc_$(HOSTTYPE).so
 
 L_NAME = libft_malloc.so
 
-CC = cc
+CC = cc -g -fsanitize=address,undefined
 
-CCFLAGS = -pedantic -std=c99 -Wall -Wextra -Werror -fPIC
+CCFLAGS = -std=c99 -Wall -Wextra -Werror -fPIC
 
 SRC_PATH = ./src
 
