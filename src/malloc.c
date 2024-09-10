@@ -59,6 +59,9 @@ void *malloc(size_t size)
   if (size == 0)
     return NULL;
 
+  if (0 != pthread_mutex_lock(&g_mutex_lock)) {
+    return NULL;
+  }
   // init the global mem pool on the first user allocation
   if (g_mem_pool.small_zone_max_size == 0 || g_mem_pool.tiny_zone_max_size == 0)
     _init_global_mem_pool();
@@ -77,5 +80,8 @@ void *malloc(size_t size)
     _push_back_new_zone(zone);
   }
   void *client_ptr = _creat_client_mem_ptr(size, zone);
+  if (0 != pthread_mutex_unlock(&g_mutex_lock)) {
+    return NULL;
+  }
   return client_ptr;
 }

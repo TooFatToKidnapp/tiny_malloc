@@ -1,6 +1,9 @@
 #include "include/malloc.h"
 
 t_pool g_mem_pool = {NULL, 0, 0};
+// https://www.ibm.com/docs/en/aix/7.1?topic=p-pthread-mutex-initializer-macro
+// https://docs.oracle.com/cd/E19455-01/806-5257/sync-112/index.html
+pthread_mutex_t g_mutex_lock = PTHREAD_MUTEX_INITIALIZER;
 
 /*
  ** init the global mem pool

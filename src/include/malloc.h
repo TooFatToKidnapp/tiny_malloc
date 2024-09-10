@@ -8,6 +8,7 @@
 #include "limits.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include <pthread.h>
 
 #define TINY_ZONE 5
 #define SMALL_ZONE 150
@@ -50,6 +51,7 @@ typedef struct s_pool
 } t_pool;
 
 extern t_pool g_mem_pool;
+extern pthread_mutex_t g_mutex_lock;
 
 void free(void *ptr);
 void *malloc(size_t size);
