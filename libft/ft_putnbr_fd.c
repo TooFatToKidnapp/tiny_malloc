@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-static unsigned int	ft_module_fd(int n)
+static size_t	ft_module_fd(size_t n)
 {
 	if (n < 0)
 		return (n * (-1));
@@ -20,9 +20,9 @@ static unsigned int	ft_module_fd(int n)
 		return (n);
 }
 
-void	ft_putnbr_fd(int n, int fd)
+void	ft_putnbr_fd(size_t n, int fd)
 {
-	unsigned int	num;
+	size_t	num;
 
 	if (n < 0)
 		ft_putchar_fd('-', fd);
