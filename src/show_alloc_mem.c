@@ -108,6 +108,9 @@ uint64_t _print_alloc(t_zone_info *zone) {
 
 void show_alloc_mem() {
 
+  if (0 != pthread_mutex_lock(&g_mutex_lock)) {
+    return;
+  }
   uint64_t min_zone_adder = 0;
   uint64_t max_allocated_bits = 0;
   t_zone_info *zone = _get_smallest_address_zone(&min_zone_adder);
@@ -119,4 +122,7 @@ void show_alloc_mem() {
   write(1, "Total : ", 8);
   ft_putnbr_fd(max_allocated_bits, 1);
   write(1, " bytes\n", 7);
+  if (0 != pthread_mutex_unlock(&g_mutex_lock)) {
+    return ;
+  }
 }
