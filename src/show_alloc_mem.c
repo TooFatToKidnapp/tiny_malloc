@@ -7,7 +7,7 @@ static t_zone_info * _get_smallest_address_zone(uint64_t* adder) {
 
   while (zone)
   {
-    zone_adder = (unsigned long)zone;
+    zone_adder = (uint64_t)zone;
     if (zone_adder > *adder && zone_adder <= max_adder) {
       max_adder = zone_adder;
     }
@@ -19,7 +19,6 @@ static t_zone_info * _get_smallest_address_zone(uint64_t* adder) {
 
 static uint64_t _format_adder(char *buffer, unsigned long adder) {
   uint64_t len = 0;
-  // const int32_t max_adder_len = 7;
   const char hex_chars[] = "0123456789ABCDEF";
   bool found_first_non_zero = false;
   buffer[len++] = '0';
@@ -29,10 +28,6 @@ static uint64_t _format_adder(char *buffer, unsigned long adder) {
     if (digit != 0 && !found_first_non_zero) {
       found_first_non_zero = true;
     }
-    // if (len == max_adder_len) {
-    //   break;
-    // }
-    // else
     if (found_first_non_zero) {
       buffer[len++] = hex_chars[digit];
     }
@@ -43,6 +38,7 @@ static uint64_t _format_adder(char *buffer, unsigned long adder) {
 
 
 static void _print_zone_info(t_zone_info* zone) {
+  // if (zone == NULL) return;
   char buffer[200] = {0};
   const char zone_type[3][9] = {"TINY : ", "SMALL : ", "LARGE : "};
   uint64_t zone_len = ft_strlen(zone_type[zone->alloc_type]);
@@ -115,6 +111,10 @@ void show_alloc_mem() {
   uint64_t max_allocated_bits = 0;
   t_zone_info *zone = _get_smallest_address_zone(&min_zone_adder);
   while (zone) {
+    // INFO("zone adder = %p\n"
+    //       "zone type = %d\n"
+    //       "zone start %p\n"
+          // , zone, zone->alloc_type, zone->alloc_pool);
     _print_zone_info(zone);
     max_allocated_bits += _print_alloc(zone);
     zone = _get_smallest_address_zone(&min_zone_adder);

@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <pthread.h>
+#include <stdlib.h>
 
 #define TINY_ZONE 5
 #define SMALL_ZONE 150
@@ -66,6 +67,7 @@ void _push_back_new_zone(t_zone_info *zone);
 t_alloc_info *_set_new_alloc(uint64_t size, t_alloc_info *head, t_alloc_info *next, t_alloc_info *prev);
 void _update_free_mem_size(uint64_t zone_size, t_zone_info *zone);
 t_zone_info *_find_ptr_mem_zone(t_zone_info *pool, void *ptr);
+t_alloc_info *_find_ptr_mem_alloc(t_zone_info *zone, void *ptr);
 void show_alloc_mem();
 
 #endif

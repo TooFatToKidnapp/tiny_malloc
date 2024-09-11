@@ -141,7 +141,6 @@ void _update_free_mem_size(uint64_t zone_size, t_zone_info *zone)
 
 t_zone_info *_find_ptr_mem_zone(t_zone_info *pool, void *ptr)
 {
-
   void *zone_border;
   t_zone_info *zone = pool;
 
@@ -158,6 +157,17 @@ t_zone_info *_find_ptr_mem_zone(t_zone_info *pool, void *ptr)
       return zone;
     }
     zone = zone->next;
+  }
+  return NULL;
+}
+
+t_alloc_info* _find_ptr_mem_alloc(t_zone_info* zone, void* ptr) {
+  t_alloc_info* head = zone->alloc_pool;
+  while(head) {
+    if ( head->chunk == ptr) {
+      return head;
+    }
+    head = head->next;
   }
   return NULL;
 }

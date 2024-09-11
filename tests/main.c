@@ -22,7 +22,7 @@ int main() {
   // puts("----------------");
 
   puts("----------------");
-  int * arr = malloc(sizeof(int) * 10);
+  int * arr = malloc(sizeof(int) * 1000000);
   assert(arr != NULL);
   arr[0] = 0;
   arr[1] = 1;
@@ -45,11 +45,15 @@ int main() {
   // puts("\nalloced i = 0 -> 10000 times");
   // puts("----------------");
 
-  void * ptr = malloc(1);
-  assert(ptr != NULL);
+  void * ptr = malloc(20430);
+  // show_alloc_mem();
+  // assert(ptr != NULL);
+  free(arr);
   ptr = malloc(1000000);
   // ptr[0] = 'A';
   // printf("ptr[0] = %c\n", ptr[0]);
+  puts("===========");
   show_alloc_mem();
+
   return 0;
 }

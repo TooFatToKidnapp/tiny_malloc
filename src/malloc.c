@@ -56,17 +56,20 @@ void *_creat_client_mem_ptr(uint64_t size, t_zone_info *zone)
 
 void *malloc(size_t size)
 {
+
   if (size == 0)
     return NULL;
 
   if (0 != pthread_mutex_lock(&g_mutex_lock)) {
-    return NULL;
+    fprintf(stderr, "Failed to mutex lock\n");
+    abort();
+    // return NULL;
   }
   // init the global mem pool on the first user allocation
   if (g_mem_pool.small_zone_max_size == 0 || g_mem_pool.tiny_zone_max_size == 0)
     _init_global_mem_pool();
-  // printf("small size = %ld bytes = %ld Mib\n", g_mem_pool.small_zone_max_size, g_mem_pool.small_zone_max_size / 1024);
-  // printf("tiny size = %ld bytes = %ld Mib\n", g_mem_pool.tiny_zone_max_size, g_mem_pool.tiny_zone_max_size / 1024);
+  printf("small size = %llu bytes = %llu Mib\n", g_mem_pool.small_zone_max_size, g_mem_pool.small_zone_max_size / 1024);
+  printf("tiny size = %llu bytes = %llu Mib\n", g_mem_pool.tiny_zone_max_size, g_mem_pool.tiny_zone_max_size / 1024);
   e_zone zone_type = _set_zone_type(size);
   // printf("zone type %d\n", zone_type);
 
@@ -81,7 +84,9 @@ void *malloc(size_t size)
   }
   void *client_ptr = _creat_client_mem_ptr(size, zone);
   if (0 != pthread_mutex_unlock(&g_mutex_lock)) {
-    return NULL;
+    // return NULL;
+    fprintf(stderr, "Failed to unlock mutex\n");
+    abort();
   }
   return client_ptr;
 }
