@@ -38,7 +38,6 @@ static uint64_t _format_adder(char *buffer, unsigned long adder) {
 
 
 static void _print_zone_info(t_zone_info* zone) {
-  // if (zone == NULL) return;
   char buffer[200] = {0};
   const char zone_type[3][9] = {"TINY : ", "SMALL : ", "LARGE : "};
   uint64_t zone_len = ft_strlen(zone_type[zone->alloc_type]);
@@ -111,10 +110,6 @@ void show_alloc_mem() {
   uint64_t max_allocated_bits = 0;
   t_zone_info *zone = _get_smallest_address_zone(&min_zone_adder);
   while (zone) {
-    // INFO("zone adder = %p\n"
-    //       "zone type = %d\n"
-    //       "zone start %p\n"
-          // , zone, zone->alloc_type, zone->alloc_pool);
     _print_zone_info(zone);
     max_allocated_bits += _print_alloc(zone);
     zone = _get_smallest_address_zone(&min_zone_adder);
