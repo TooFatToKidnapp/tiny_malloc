@@ -21,7 +21,6 @@ static bool is_only_zone_with_type(e_zone type)
 
 void free(void *ptr)
 {
-
   if (ptr == NULL)
     return;
 

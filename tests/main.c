@@ -14,17 +14,15 @@
 */
 
 int main() {
-
-
-  int * arr = malloc(sizeof(int) * 100);
+  int * arr = malloc(sizeof(int) * 30);
   assert(arr != NULL);
   arr[0] = 0;
   arr[1] = 1;
 
-  for (int i = 2 ; i < 10 ; ++i) {
+  for (int i = 2 ; i < 30 ; ++i) {
     arr[i] = arr[i - 1] + arr[i - 2];
   }
-  for(int j = 0; j < 10 ; ++j) {
+  for(int j = 0; j < 30 ; ++j) {
     printf("%d ", arr[j]);
   }
   printf("\n");
