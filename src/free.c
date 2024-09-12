@@ -7,7 +7,7 @@
 static bool is_only_zone_with_type(e_zone type)
 {
   u_int64_t count = 0;
-  t_zone_info *zone = g_mem_pool.pool;
+  zone_info_t *zone = _mem_pool.pool;
   while (zone && zone->next)
   {
     if (zone->alloc_type == type)
@@ -24,17 +24,17 @@ void free(void *ptr)
   if (ptr == NULL)
     return;
 
-  if (0 != pthread_mutex_lock(&g_mutex_lock))
+  if (0 != pthread_mutex_lock(&_mutex_lock))
   {
     return;
   }
 
-  t_zone_info *zone = _find_ptr_mem_zone(g_mem_pool.pool, ptr);
-  t_alloc_info *ptr_alloc = _find_ptr_mem_alloc(zone, ptr);
+  zone_info_t *zone = _find_ptr_mem_zone(_mem_pool.pool, ptr);
+  alloc_info_t *ptr_alloc = _find_ptr_mem_alloc(zone, ptr);
 
   if (!ptr_alloc)
   {
-    pthread_mutex_unlock(&g_mutex_lock);
+    pthread_mutex_unlock(&_mutex_lock);
     return;
   }
 
@@ -48,15 +48,16 @@ void free(void *ptr)
   else
   {
     zone->alloc_pool = ptr_alloc->next;
-    if (zone->alloc_pool) {
+    if (zone->alloc_pool)
+    {
       zone->alloc_pool->prev = NULL;
     }
   }
   _update_free_mem_size(zone_size, zone);
-  INFO("zone->free_mem_size == zone_size - sizeof(t_zone_info) == %d\n"
+  INFO("zone->free_mem_size == zone_size - sizeof(zone_info_t) == %d\n"
        "is_only_zone_with_type(zone->alloc_type) == %d\n",
-       zone->free_mem_size == zone_size - sizeof(t_zone_info), is_only_zone_with_type(zone->alloc_type));
-  if (zone->free_mem_size == zone_size - sizeof(t_zone_info) && (zone->alloc_type == large || is_only_zone_with_type(zone->alloc_type)))
+       zone->free_mem_size == zone_size - sizeof(zone_info_t), is_only_zone_with_type(zone->alloc_type));
+  if (zone->free_mem_size == zone_size - sizeof(zone_info_t) && (zone->alloc_type == large || is_only_zone_with_type(zone->alloc_type)))
   {
     if (zone->prev)
     {
@@ -64,8 +65,8 @@ void free(void *ptr)
     }
     else
     {
-      g_mem_pool.pool = zone->next;
-      g_mem_pool.pool->prev = NULL;
+      _mem_pool.pool = zone->next;
+      _mem_pool.pool->prev = NULL;
     }
     if (zone->next)
     {
@@ -82,6 +83,6 @@ void free(void *ptr)
       abort();
     }
   }
-  pthread_mutex_unlock(&g_mutex_lock);
+  pthread_mutex_unlock(&_mutex_lock);
   return;
 }

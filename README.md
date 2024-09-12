@@ -1,3 +1,3 @@
 ## Tiny Malloc
 
-reimplementation of libc malloc, realloc and free
+re implementation of libc malloc, realloc, calloc and free functions.

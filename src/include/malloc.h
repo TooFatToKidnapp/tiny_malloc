@@ -26,48 +26,50 @@ typedef enum zone
   large
 } e_zone;
 
-typedef struct s_alloc_info
+typedef struct alloc_info_s
 {
-  struct s_alloc_info *next;
-  struct s_alloc_info *prev;
+  struct alloc_info_s *next;
+  struct alloc_info_s *prev;
   void *chunk;
   uint64_t size;
   uint64_t capacity;
-} t_alloc_info;
+} alloc_info_t;
 
-typedef struct s_zone_info
+typedef struct zone_info_s
 {
-  t_alloc_info *alloc_pool;
+  alloc_info_t *alloc_pool;
   e_zone alloc_type;
-  struct s_zone_info *prev;
-  struct s_zone_info *next;
+  struct zone_info_s *prev;
+  struct zone_info_s *next;
   uint64_t free_mem_size;
-} t_zone_info;
+} zone_info_t;
 
-typedef struct s_pool
+typedef struct pool_s
 {
-  t_zone_info *pool;
+  zone_info_t *pool;
   uint64_t tiny_zone_max_size;
   uint64_t small_zone_max_size;
-} t_pool;
+} pool_t;
 
-extern t_pool g_mem_pool;
-extern pthread_mutex_t g_mutex_lock;
+extern pool_t _mem_pool;
+extern pthread_mutex_t _mutex_lock;
 
 void free(void *ptr);
 void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
+void *calloc(size_t count, size_t size);
+
 
 void _init_global_mem_pool();
 e_zone _set_zone_type(uint64_t size);
-t_zone_info *_get_alloc_zone(uint64_t size, e_zone zone_type);
+zone_info_t *_get_alloc_zone(uint64_t size, e_zone zone_type);
 uint64_t _get_zone_mem_size(uint64_t size, e_zone zone_type);
 void *_create_alloc_zone(uint64_t size, e_zone zone_type);
-void _push_back_new_zone(t_zone_info *zone);
-t_alloc_info *_set_new_alloc(uint64_t size, t_alloc_info *head, t_alloc_info *next, t_alloc_info *prev);
-void _update_free_mem_size(uint64_t zone_size, t_zone_info *zone);
-t_zone_info *_find_ptr_mem_zone(t_zone_info *pool, void *ptr);
-t_alloc_info *_find_ptr_mem_alloc(t_zone_info *zone, void *ptr);
+void _push_back_new_zone(zone_info_t *zone);
+alloc_info_t *_set_new_alloc(uint64_t size, alloc_info_t *head, alloc_info_t *next, alloc_info_t *prev);
+void _update_free_mem_size(uint64_t zone_size, zone_info_t *zone);
+zone_info_t *_find_ptr_mem_zone(zone_info_t *pool, void *ptr);
+alloc_info_t *_find_ptr_mem_alloc(zone_info_t *zone, void *ptr);
 void show_alloc_mem();
 
 #endif
