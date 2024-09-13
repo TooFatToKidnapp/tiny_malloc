@@ -14,39 +14,28 @@
 */
 
 int main() {
-  int * arr = malloc(sizeof(int) * 30);
+
+  int *arr = malloc(sizeof(int) * 10);
   assert(arr != NULL);
   arr[0] = 0;
   arr[1] = 1;
 
-  for (int i = 2 ; i < 30 ; ++i) {
+  for (size_t i = 2; i < 10; ++i) {
     arr[i] = arr[i - 1] + arr[i - 2];
   }
-  for(int j = 0; j < 30 ; ++j) {
-    printf("%d ", arr[j]);
+
+  for (size_t i = 0 ; i < 10; ++i) {
+    printf("%d ", arr[i]);
   }
   printf("\n");
 
-
-  // for (int i = 1 ; i < 10000; ++i) {
-  //   void *ptr = malloc(i);
-  //   assert(ptr != NULL);
-  // }
-  // puts("\nalloced i = 0 -> 10000 times");
-
-
-  void * ptr = malloc(20430);
+  int * ptr = realloc(arr, sizeof(int) * 15 );
   assert(ptr != NULL);
 
-  ptr = malloc(1000000);
-  assert(ptr != NULL);
-
-  show_alloc_mem();
-  free(arr);
-  free(ptr);
-
-
-  show_alloc_mem();
+  for (size_t i = 0 ; i < 15; ++i) {
+    printf("%d ", ptr[i]);
+  }
+  printf("\n");
 
   return 0;
 }

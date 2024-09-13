@@ -12,7 +12,7 @@ alloc_info_t *_get_alloc(uint64_t size, zone_info_t *zone, void *alloc_end)
   alloc_info_t *ptr = NULL;
 
   if (!head)
-  { // poll is empty
+  { // pool is empty
     ptr = _set_new_alloc(size, (alloc_info_t *)(zone + sizeof(alloc_info_t)), NULL, NULL);
     zone->alloc_pool = ptr;
   }
@@ -59,7 +59,8 @@ void *malloc(size_t size)
 
   if (size == 0)
     return NULL;
-
+  // round up the size to the next multiple of 16.
+  size = (size + 15) & ~15;
   if (0 != pthread_mutex_lock(&_mutex_lock))
   {
     fprintf(stderr, "Failed to mutex lock\n");
