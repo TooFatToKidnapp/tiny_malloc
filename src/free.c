@@ -54,9 +54,9 @@ void free(void *ptr)
     }
   }
   _update_free_mem_size(zone_size, zone);
-  INFO("zone->free_mem_size == zone_size - sizeof(zone_info_t) == %d\n"
-       "is_only_zone_with_type(zone->alloc_type) == %d\n",
-       zone->free_mem_size == zone_size - sizeof(zone_info_t), is_only_zone_with_type(zone->alloc_type));
+  //INFO("zone->free_mem_size == zone_size - sizeof(zone_info_t) == %d\n"
+    //   "is_only_zone_with_type(zone->alloc_type) == %d\n",
+      // zone->free_mem_size == zone_size - sizeof(zone_info_t), is_only_zone_with_type(zone->alloc_type));
   if (zone->free_mem_size == zone_size - sizeof(zone_info_t) && (zone->alloc_type == large || is_only_zone_with_type(zone->alloc_type)))
   {
     if (zone->prev)
@@ -72,14 +72,14 @@ void free(void *ptr)
     {
       zone->next->prev = zone->prev;
     }
-    INFO("Calling unmap on zone\n"
-         "zone adder = %p\n"
-         "zone type = %d\n"
-         "zone start %p\n",
-         zone, zone->alloc_type, zone->alloc_pool);
+    // INFO("Calling unmap on zone\n"
+    //      "zone adder = %p\n"
+    //      "zone type = %d\n"
+    //      "zone start %p\n",
+    //      zone, zone->alloc_type, zone->alloc_pool);
     if (0 > munmap((void *)zone, zone_size))
     {
-      INFO("failed to unmap adder = %p\n", zone);
+      // INFO("failed to unmap adder = %p\n", zone);
       abort();
     }
   }

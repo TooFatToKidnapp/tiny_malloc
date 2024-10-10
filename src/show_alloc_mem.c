@@ -50,7 +50,7 @@ static void _print_zone_info_t(zone_info_t *zone)
 
   ft_memcpy(buffer, zone_type[zone->alloc_type], zone_len);
 
-  uint64_t adder_len = _format_adder(buffer + zone_len, (unsigned long)zone);
+  uint64_t adder_len = _format_adder(buffer + zone_len , (unsigned long)zone);
 
   buffer[zone_len + adder_len] = '\n';
 
@@ -103,8 +103,8 @@ uint64_t _print_alloc(zone_info_t *zone)
     buffer_len = ft_strlcat(buffer, " : ", sizeof(buffer));
     buffer_len += _format_size_as_bytes(buffer + buffer_len, head->capacity);
     ft_memcpy(buffer + buffer_len, " bytes\n", 7);
-    buffer[buffer_len + 8] = '\n';
-    write(1, buffer, buffer_len + 8);
+    buffer[buffer_len + 7] = '\n';
+    write(1, buffer, buffer_len + 7);
     head = head->next;
   }
 

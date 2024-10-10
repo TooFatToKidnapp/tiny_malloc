@@ -1,17 +1,20 @@
 #include "include/malloc.h"
 
-static void * _find_and_set_new_allocation(size_t size, size_t zone_size, zone_info_t * zone, alloc_info_t* alloc) {
+static void *_find_and_set_new_allocation(size_t size, size_t zone_size, zone_info_t *zone, alloc_info_t *alloc)
+{
 
   char *next = NULL;
 
-  if (_set_zone_type(alloc->capacity) != _set_zone_type(size)) {
+  if (_set_zone_type(alloc->capacity) != _set_zone_type(size))
+  {
     return NULL;
   }
 
-  if (size >= alloc->capacity) {
-    next = (char *)(((uint64_t)alloc->next * (alloc->next != NULL))
-        * (((uint64_t)(char *)zone + zone_size) * (alloc->next == NULL)));
-  if ((uint64_t)next <= (uint64_t)alloc->chunk + size) return NULL;
+  if (size >= alloc->capacity)
+  {
+    next = (char *)(((uint64_t)alloc->next * (alloc->next != NULL)) * (((uint64_t)(char *)zone + zone_size) * (alloc->next == NULL)));
+    if ((uint64_t)next <= (uint64_t)alloc->chunk + size)
+      return NULL;
   }
   alloc->size = size;
   _update_free_mem_size(zone_size, zone);
@@ -41,7 +44,7 @@ void *realloc(void *ptr, size_t size)
   if (!ptr_alloc)
   {
     pthread_mutex_unlock(&_mutex_lock);
-    INFO("PTR = [%p] WAS NOT ALLOCATED\n", ptr);
+    // INFO("PTR = [%p] WAS NOT ALLOCATED\n", ptr);
     abort();
     return NULL;
   }
@@ -58,7 +61,8 @@ void *realloc(void *ptr, size_t size)
 
   void *client_ptr = _find_and_set_new_allocation(size, zone_size, zone, ptr_alloc);
 
-  if (client_ptr == NULL) {
+  if (client_ptr == NULL)
+  {
     pthread_mutex_unlock(&_mutex_lock);
     client_ptr = malloc(size);
     if (client_ptr == NULL)

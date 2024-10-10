@@ -11,7 +11,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-#define TINY_ZONE 5
+#define TINY_ZONE 20
 #define SMALL_ZONE 150
 
 #define INFO(format, ...)                                      \
