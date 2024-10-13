@@ -19,6 +19,8 @@
   fprintf(stderr, format, __VA_ARGS__);                        \
   fprintf(stderr, "------------------\n");
 
+#define PUBLIC __attribute__ ((visibility ("default")))
+
 typedef enum zone
 {
   tiny,
@@ -54,10 +56,11 @@ typedef struct pool_s
 extern pool_t _mem_pool;
 extern pthread_mutex_t _mutex_lock;
 
-void free(void *ptr);
-void *malloc(size_t size);
-void *realloc(void *ptr, size_t size);
-void *calloc(size_t count, size_t size);
+PUBLIC void free(void *ptr);
+PUBLIC void *malloc(size_t size);
+PUBLIC void *realloc(void *ptr, size_t size);
+PUBLIC void *calloc(size_t count, size_t size);
+PUBLIC void show_alloc_mem();
 
 
 void _init_global_mem_pool();
@@ -70,6 +73,5 @@ alloc_info_t *_set_new_alloc(uint64_t size, alloc_info_t *head, alloc_info_t *ne
 void _update_free_mem_size(uint64_t zone_size, zone_info_t *zone);
 zone_info_t *_find_ptr_mem_zone(zone_info_t *pool, void *ptr);
 alloc_info_t *_find_ptr_mem_alloc(zone_info_t *zone, void *ptr);
-void show_alloc_mem();
 
 #endif

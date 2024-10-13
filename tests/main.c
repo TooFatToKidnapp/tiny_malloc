@@ -39,11 +39,18 @@ int main() {
   // printf("\n");
 
   // return 0;
-
-  for (uint32_t i = 0 ; i < 100 ; ++i) {
-    void * ptr = malloc(1);
-    assert(ptr);
-  }
+  // void *s = malloc(10);
+  // for (uint32_t i = 0 ; i < 200 ; ++i) {
+    // fprintf(stderr, "i == %d\n", i);
+    // s = malloc(s, i + 1);
+    // assert(s);
+    // free(s);
+  // }
+  void * p = malloc(155500);
   show_alloc_mem();
+  free(p);
+  puts("======");
+  show_alloc_mem();
+
   return 0;
 }

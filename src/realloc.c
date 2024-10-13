@@ -44,7 +44,7 @@ void *realloc(void *ptr, size_t size)
   if (!ptr_alloc)
   {
     pthread_mutex_unlock(&_mutex_lock);
-    // INFO("PTR = [%p] WAS NOT ALLOCATED\n", ptr);
+    INFO("PTR = [%p] WAS NOT ALLOCATED WITH MALLOC\n", ptr);
     abort();
     return NULL;
   }

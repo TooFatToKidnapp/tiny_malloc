@@ -8,7 +8,7 @@ L_NAME = libft_malloc.so
 
 CC = cc -g -fsanitize=address,undefined
 
-CCFLAGS = -std=c99 -Wall -Wextra -Werror -fPIC
+CCFLAGS = -std=c99 -Wall -Wextra -Werror -fPIC -fvisibility=hidden
 
 SRC_PATH = ./src
 

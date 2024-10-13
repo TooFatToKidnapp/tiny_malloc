@@ -18,7 +18,7 @@ AR = ar rcs
 
 HEADER = libft.h
 
-CFLAGS = -Wall -Werror -Wextra -pedantic
+CFLAGS = -Wall -Werror -Wextra -pedantic -fvisibility=hidden
 
 SRC =	ft_strnstr.c\
 		ft_strncmp.c\

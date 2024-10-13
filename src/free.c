@@ -43,7 +43,9 @@ void free(void *ptr)
   if (ptr_alloc->prev)
   {
     ptr_alloc->prev->next = ptr_alloc->next;
-    ptr_alloc->next->prev = ptr_alloc->prev;
+    if (ptr_alloc->next) {
+      ptr_alloc->next->prev = ptr_alloc->prev;
+    }
   }
   else
   {
@@ -57,7 +59,8 @@ void free(void *ptr)
   //INFO("zone->free_mem_size == zone_size - sizeof(zone_info_t) == %d\n"
     //   "is_only_zone_with_type(zone->alloc_type) == %d\n",
       // zone->free_mem_size == zone_size - sizeof(zone_info_t), is_only_zone_with_type(zone->alloc_type));
-  if (zone->free_mem_size == zone_size - sizeof(zone_info_t) && (zone->alloc_type == large || is_only_zone_with_type(zone->alloc_type)))
+  if (zone->free_mem_size == zone_size - sizeof(zone_info_t) && (zone->alloc_type == large
+        || is_only_zone_with_type(zone->alloc_type)))
   {
     if (zone->prev)
     {
@@ -66,7 +69,9 @@ void free(void *ptr)
     else
     {
       _mem_pool.pool = zone->next;
-      _mem_pool.pool->prev = NULL;
+      if (_mem_pool.pool) {
+        _mem_pool.pool->prev = NULL;
+      }
     }
     if (zone->next)
     {

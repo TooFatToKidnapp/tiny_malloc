@@ -1,6 +1,6 @@
 #include "include/malloc.h"
 
-void * calloc(size_t count, size_t size) {
+void* calloc(size_t count, size_t size) {
   size_t total_size = count * size;
   if (count && size && (total_size / count == size)) {
     void *ptr = malloc(total_size);

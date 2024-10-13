@@ -86,7 +86,7 @@ uint64_t _get_zone_mem_size(uint64_t size, e_zone zone_type)
 void *_create_alloc_zone(uint64_t size, e_zone zone_type)
 {
   uint64_t allocation_size = _get_zone_mem_size(size, zone_type);
-  // INFO("Creating a new allocation zone %llu\n", allocation_size);
+  INFO("Creating a new allocation zone %llu\n", allocation_size);
 
   zone_info_t new_zone = {
       .alloc_pool = NULL,
@@ -141,6 +141,7 @@ void _update_free_mem_size(uint64_t zone_size, zone_info_t *zone)
   {
     // INFO("%s\n", "HEAD == NULL");
     zone->free_mem_size = zone_size - sizeof(zone_info_t);
+    return;
   }
   for (; head->next; head = head->next)
   {
@@ -155,18 +156,18 @@ void _update_free_mem_size(uint64_t zone_size, zone_info_t *zone)
 
 zone_info_t *_find_ptr_mem_zone(zone_info_t *pool, void *ptr)
 {
-  void *zone_border;
+  char *zone_border;
   zone_info_t *zone = pool;
 
-  while (pool)
+  while (zone)
   {
     if (zone->alloc_pool == NULL)
     {
       zone = zone->next;
       continue;
     }
-    zone_border = zone + _get_zone_mem_size(zone->free_mem_size, zone->alloc_type);
-    if (ptr >= (void *)((alloc_info_t *)(zone + 1) + 1) && ptr < zone_border)
+    zone_border = (char *)zone + _get_zone_mem_size(zone->free_mem_size, zone->alloc_type);
+    if (ptr >= (void *)((alloc_info_t *)(zone + 1) + 1) && (char *)ptr < zone_border)
     {
       return zone;
     }
@@ -177,6 +178,7 @@ zone_info_t *_find_ptr_mem_zone(zone_info_t *pool, void *ptr)
 
 alloc_info_t *_find_ptr_mem_alloc(zone_info_t *zone, void *ptr)
 {
+  if (zone == NULL) return NULL;
   alloc_info_t *head = zone->alloc_pool;
   while (head)
   {

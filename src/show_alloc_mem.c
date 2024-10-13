@@ -87,7 +87,7 @@ LARGE : 0xB0000
 Total : 52698 bytes
 */
 
-uint64_t _print_alloc(zone_info_t *zone)
+static uint64_t _print_alloc(zone_info_t *zone)
 {
   uint64_t max_size = 0;
   alloc_info_t *head = zone->alloc_pool;

@@ -6,7 +6,7 @@
  * then set the new alloc and update the previous and next alloc so the linked list of alloc stays consistent
  * returns the newly created alloc_info_t
  */
-alloc_info_t *_get_alloc(uint64_t size, zone_info_t *zone, void *alloc_end)
+static alloc_info_t *_get_alloc(uint64_t size, zone_info_t *zone, void *alloc_end)
 {
   alloc_info_t *head = zone->alloc_pool;
   alloc_info_t *ptr = NULL;
@@ -46,7 +46,7 @@ alloc_info_t *_get_alloc(uint64_t size, zone_info_t *zone, void *alloc_end)
   return NULL;
 }
 
-void *_creat_client_mem_ptr(uint64_t size, zone_info_t *zone)
+static void *_creat_client_mem_ptr(uint64_t size, zone_info_t *zone)
 {
   uint64_t zone_size = _get_zone_mem_size(size, zone->alloc_type);
   alloc_info_t *head = _get_alloc(size, zone, (char *)zone + zone_size);
@@ -78,7 +78,7 @@ void *malloc(size_t size)
   // printf("small size = %llu bytes = %f Mib\n", _mem_pool.small_zone_max_size, _mem_pool.small_zone_max_size / 1024.f);
   // printf("tiny size = %llu bytes = %f Mib\n", _mem_pool.tiny_zone_max_size, _mem_pool.tiny_zone_max_size / 1024.f);
   e_zone zone_type = _set_zone_type(size);
-  // INFO("***Allocation type = [%d]***\n", zone_type);
+  INFO("***Allocation type = [%d] size = [%zu]***\n", zone_type, size);
 
   zone_info_t *zone = _get_alloc_zone(size, zone_type);
   if (zone == NULL)
