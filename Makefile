@@ -6,7 +6,7 @@ NAME = libft_malloc_$(HOSTTYPE).so
 
 L_NAME = libft_malloc.so
 
-CC = cc -g -fsanitize=address,undefined
+CC = cc #-g -fsanitize=address,undefined
 
 CCFLAGS = -std=c99 -Wall -Wextra -Werror -fPIC -fvisibility=hidden
 
@@ -24,7 +24,7 @@ SRC_INCLUDE = $(SRC_PATH)
 
 INC = $(addprefix -I, $(LIBFT_INCLUDE) $(SRC_INCLUDE))
 
-SRC = $(addprefix $(SRC_PATH)/, malloc.c free.c realloc.c init.c show_alloc_mem.c)
+SRC = $(addprefix $(SRC_PATH)/, malloc.c free.c realloc.c init.c show_alloc_mem.c calloc.c dbg_env_handler.c)
 
 OBJ = $(SRC:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
 

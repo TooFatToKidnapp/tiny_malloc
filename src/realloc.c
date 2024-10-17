@@ -18,7 +18,10 @@ static void *_find_and_set_new_allocation(size_t size, size_t zone_size, zone_in
   }
   alloc->size = size;
   _update_free_mem_size(zone_size, zone);
-  pthread_mutex_unlock(&_mutex_lock);
+  if (0 != pthread_mutex_unlock(&_mutex_lock))
+  {
+    _abort_program("Failed to unlock Allocation Mutex");
+  }
   return alloc->chunk;
 }
 
@@ -37,20 +40,27 @@ void *realloc(void *ptr, size_t size)
   size = (size + 15) & ~15;
   if (0 != pthread_mutex_lock(&_mutex_lock))
   {
+    _abort_program("Failed to lock Allocation Mutex");
     return NULL;
   }
   zone_info_t *zone = _find_ptr_mem_zone(_mem_pool.pool, ptr);
   alloc_info_t *ptr_alloc = _find_ptr_mem_alloc(zone, ptr);
   if (!ptr_alloc)
   {
-    pthread_mutex_unlock(&_mutex_lock);
-    INFO("PTR = [%p] WAS NOT ALLOCATED WITH MALLOC\n", ptr);
-    abort();
+    if (0 != pthread_mutex_unlock(&_mutex_lock))
+    {
+      _abort_program("Failed to unlock Allocation Mutex");
+      return NULL;
+    }
+    _abort_program("Realloc: the passed in pointer was not allocated");
     return NULL;
   }
   else if (size == ptr_alloc->capacity)
   {
-    pthread_mutex_unlock(&_mutex_lock);
+    if (0 != pthread_mutex_unlock(&_mutex_lock))
+    {
+      _abort_program("Failed to unlock Allocation Mutex");
+    }
     return ptr;
   }
 
@@ -63,21 +73,32 @@ void *realloc(void *ptr, size_t size)
 
   if (client_ptr == NULL)
   {
-    pthread_mutex_unlock(&_mutex_lock);
+    if (0 != pthread_mutex_unlock(&_mutex_lock))
+    {
+      _abort_program("Failed to unlock Allocation Mutex");
+      return NULL;
+    }
     client_ptr = malloc(size);
     if (client_ptr == NULL)
       return NULL;
   }
 
-  pthread_mutex_lock(&_mutex_lock);
+  if (0 != pthread_mutex_lock(&_mutex_lock))
+  {
+    _abort_program("Failed to lock Allocation Mutex");
+    return NULL;
+  }
 
   size_t data_size = size > ptr_alloc->capacity ? ptr_alloc->capacity : size;
 
   ft_memmove(client_ptr, ptr_alloc->chunk, data_size);
 
-  pthread_mutex_unlock(&_mutex_lock);
+  if (0 != pthread_mutex_unlock(&_mutex_lock))
+  {
+    _abort_program("Failed to unlock Allocation Mutex");
+    return NULL;
+  }
 
   free(ptr_alloc->chunk);
-
   return client_ptr;
 }

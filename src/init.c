@@ -48,11 +48,6 @@ zone_info_t *_get_alloc_zone(uint64_t size, e_zone zone_type)
 
   while (pool)
   {
-    // INFO("pool->alloc_type == %d\n"
-    //      "zone_type == %d\n"
-    //      "pool->free_mem_size == %lld\n"
-    //      "(size + sizeof(alloc_info_t)) == %lld\n",
-    //      pool->alloc_type, zone_type, pool->free_mem_size, (size + sizeof(alloc_info_t)));
     if (pool->alloc_type == zone_type && pool->free_mem_size > (size + sizeof(alloc_info_t)))
       return pool;
     pool = pool->next;
@@ -73,7 +68,6 @@ zone_info_t *_get_alloc_zone(uint64_t size, e_zone zone_type)
 uint64_t _get_zone_mem_size(uint64_t size, e_zone zone_type)
 {
   int32_t mem_page_size = sysconf(_SC_PAGESIZE);
-  // INFO("page size = %d\nsize = %llu\nzone type = %d\n", mem_page_size, size, zone_type);
 
   return ((mem_page_size * TINY_ZONE) * (zone_type == tiny)) +
          ((mem_page_size * SMALL_ZONE) * (zone_type == small)) +
@@ -86,7 +80,6 @@ uint64_t _get_zone_mem_size(uint64_t size, e_zone zone_type)
 void *_create_alloc_zone(uint64_t size, e_zone zone_type)
 {
   uint64_t allocation_size = _get_zone_mem_size(size, zone_type);
-  INFO("Creating a new allocation zone %llu\n", allocation_size);
 
   zone_info_t new_zone = {
       .alloc_pool = NULL,
@@ -97,9 +90,8 @@ void *_create_alloc_zone(uint64_t size, e_zone zone_type)
     };
 
   void *adder = mmap(NULL, allocation_size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
-  // printf("Called MMAP\n");
   if (adder == MAP_FAILED) {
-    abort();
+    _abort_program("malloc: Failed to allocated memory");
     return NULL;
   }
   ft_memcpy(adder, &new_zone, sizeof(new_zone));
@@ -135,17 +127,14 @@ void _update_free_mem_size(uint64_t zone_size, zone_info_t *zone)
   alloc_info_t *head = zone->alloc_pool;
   long new_free_size = 0;
   ptrdiff_t offset = 0;
-  // INFO("_update_free_mem_size head = %p\n", head);
 
   if (head == NULL)
   {
-    // INFO("%s\n", "HEAD == NULL");
     zone->free_mem_size = zone_size - sizeof(zone_info_t);
     return;
   }
   for (; head->next; head = head->next)
   {
-    // INFO("head = %p; head->next = %p\n", head, head->next);
     offset = (char *)head->next - ((char *)head->chunk + head->size);
     new_free_size = (new_free_size * (offset <= new_free_size)) + (offset * (offset > new_free_size));
   }

@@ -16,7 +16,7 @@ static bool is_only_zone_with_type(e_zone type)
     }
     zone = zone->next;
   }
-  return count > 1;
+  return count <= 1;
 }
 
 void free(void *ptr)
@@ -26,6 +26,7 @@ void free(void *ptr)
 
   if (0 != pthread_mutex_lock(&_mutex_lock))
   {
+    _abort_program("Failed to lock Allocation Mutex");
     return;
   }
 
@@ -34,7 +35,11 @@ void free(void *ptr)
 
   if (!ptr_alloc)
   {
-    pthread_mutex_unlock(&_mutex_lock);
+    if (0 != pthread_mutex_unlock(&_mutex_lock))
+    {
+      _abort_program("Failed to unlock Allocation Mutex");
+    }
+    _abort_program("Free: the passed in pointer was not allocated");
     return;
   }
 
@@ -43,7 +48,8 @@ void free(void *ptr)
   if (ptr_alloc->prev)
   {
     ptr_alloc->prev->next = ptr_alloc->next;
-    if (ptr_alloc->next) {
+    if (ptr_alloc->next)
+    {
       ptr_alloc->next->prev = ptr_alloc->prev;
     }
   }
@@ -56,11 +62,8 @@ void free(void *ptr)
     }
   }
   _update_free_mem_size(zone_size, zone);
-  //INFO("zone->free_mem_size == zone_size - sizeof(zone_info_t) == %d\n"
-    //   "is_only_zone_with_type(zone->alloc_type) == %d\n",
-      // zone->free_mem_size == zone_size - sizeof(zone_info_t), is_only_zone_with_type(zone->alloc_type));
-  if (zone->free_mem_size == zone_size - sizeof(zone_info_t) && (zone->alloc_type == large
-        || is_only_zone_with_type(zone->alloc_type)))
+
+  if (zone->free_mem_size == zone_size - sizeof(zone_info_t) && (zone->alloc_type == large || !is_only_zone_with_type(zone->alloc_type)))
   {
     if (zone->prev)
     {
@@ -69,7 +72,8 @@ void free(void *ptr)
     else
     {
       _mem_pool.pool = zone->next;
-      if (_mem_pool.pool) {
+      if (_mem_pool.pool)
+      {
         _mem_pool.pool->prev = NULL;
       }
     }
@@ -77,17 +81,14 @@ void free(void *ptr)
     {
       zone->next->prev = zone->prev;
     }
-    // INFO("Calling unmap on zone\n"
-    //      "zone adder = %p\n"
-    //      "zone type = %d\n"
-    //      "zone start %p\n",
-    //      zone, zone->alloc_type, zone->alloc_pool);
     if (0 > munmap((void *)zone, zone_size))
     {
-      // INFO("failed to unmap adder = %p\n", zone);
-      abort();
+      _abort_program("Failed to unmap memory");
     }
   }
-  pthread_mutex_unlock(&_mutex_lock);
+  if (0 != pthread_mutex_unlock(&_mutex_lock))
+  {
+    _abort_program("Failed to unlock Allocation Mutex");
+  }
   return;
 }

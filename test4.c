@@ -1,5 +1,4 @@
 # include "src/include/malloc.h"
-
 #define M (1024 * 1024)
 
 int main()

@@ -50,8 +50,8 @@ static void *_creat_client_mem_ptr(uint64_t size, zone_info_t *zone)
 {
   uint64_t zone_size = _get_zone_mem_size(size, zone->alloc_type);
   alloc_info_t *head = _get_alloc(size, zone, (char *)zone + zone_size);
-  if (head == NULL) {
-    // INFO("\n\n=============\n\n HEAD == %p \n =================\n\n", head);
+  if (head == NULL)
+  {
     return NULL;
   }
   _update_free_mem_size(zone_size, zone);
@@ -64,21 +64,16 @@ void *malloc(size_t size)
     return NULL;
   // round up the size to the next multiple of 16.
   size = (size + 15) & ~15;
-  // INFO("requested allocation size after memory alignment = %zu\n", size);
   if (0 != pthread_mutex_lock(&_mutex_lock))
   {
-    fprintf(stderr, "Failed to mutex lock\n");
-    abort();
-    // return NULL;
+    _abort_program("Failed to lock Allocation Mutex");
+    return NULL;
   }
   // init the global mem pool on the first user allocation
   if (_mem_pool.small_zone_max_size == 0 || _mem_pool.tiny_zone_max_size == 0)
     _init_global_mem_pool();
-  // printf("TINY ZONE SIZE == %d | SMALL ZONE SIZE == %d \n", TINY_ZONE, SMALL_ZONE);
-  // printf("small size = %llu bytes = %f Mib\n", _mem_pool.small_zone_max_size, _mem_pool.small_zone_max_size / 1024.f);
-  // printf("tiny size = %llu bytes = %f Mib\n", _mem_pool.tiny_zone_max_size, _mem_pool.tiny_zone_max_size / 1024.f);
+
   e_zone zone_type = _set_zone_type(size);
-  INFO("***Allocation type = [%d] size = [%zu]***\n", zone_type, size);
 
   zone_info_t *zone = _get_alloc_zone(size, zone_type);
   if (zone == NULL)
@@ -86,15 +81,13 @@ void *malloc(size_t size)
     zone = _create_alloc_zone(size, zone_type);
     if (zone == NULL)
       return NULL;
-    // INFO("created new zone of type = %d and size = %llu\n", zone->alloc_type, zone->free_mem_size);
     _push_back_new_zone(zone);
   }
   void *client_ptr = _creat_client_mem_ptr(size, zone);
   if (0 != pthread_mutex_unlock(&_mutex_lock))
   {
-    // return NULL;
-    fprintf(stderr, "Failed to unlock mutex\n");
-    abort();
+    _abort_program("Failed to unlock Allocation Mutex");
+    return NULL;
   }
   return client_ptr;
 }

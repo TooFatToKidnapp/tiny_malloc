@@ -50,7 +50,7 @@ static void _print_zone_info_t(zone_info_t *zone)
 
   ft_memcpy(buffer, zone_type[zone->alloc_type], zone_len);
 
-  uint64_t adder_len = _format_adder(buffer + zone_len , (unsigned long)zone);
+  uint64_t adder_len = _format_adder(buffer + zone_len, (unsigned long)zone);
 
   buffer[zone_len + adder_len] = '\n';
 
@@ -115,6 +115,7 @@ void show_alloc_mem()
 {
   if (0 != pthread_mutex_lock(&_mutex_lock))
   {
+    _abort_program("Failed to lock Allocation Mutex");
     return;
   }
   uint64_t min_zone_adder = 0;
@@ -131,6 +132,6 @@ void show_alloc_mem()
   write(1, " bytes\n", 7);
   if (0 != pthread_mutex_unlock(&_mutex_lock))
   {
-    return;
+    _abort_program("Failed to unlock Allocation Mutex");
   }
 }

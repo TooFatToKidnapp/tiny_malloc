@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <stdint.h>
-#include "malloc.h"
+#include "./../src/include/malloc.h"
 
 /*
   DYLD_LIBRARY_PATH=..
@@ -39,18 +39,21 @@ int main() {
   // printf("\n");
 
   // return 0;
-  // void *s = malloc(10);
-  // for (uint32_t i = 0 ; i < 200 ; ++i) {
+  uint64_t total = 10;
+  void *s = malloc(10);
+  for (uint32_t i = 0 ; i < 200 ; ++i) {
     // fprintf(stderr, "i == %d\n", i);
-    // s = malloc(s, i + 1);
+    s = malloc(i + 1);
+    total += i + 1;
     // assert(s);
-    // free(s);
-  // }
-  void * p = malloc(155500);
-  show_alloc_mem();
-  free(p);
-  puts("======");
-  show_alloc_mem();
+    free(s);
+  };
+  printf("Total = %llu\n", total);
+  // while (true) {};
+  // show_alloc_mem();
+  // free(p);
+  // puts("======");
+  // show_alloc_mem();
 
   return 0;
 }
