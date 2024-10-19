@@ -19,23 +19,23 @@ static zone_info_t *_get_smallest_address_zone(uint64_t *adder)
   return (zone_info_t *)(*adder * (*adder != ULONG_MAX));
 }
 
-static uint64_t _format_adder(char *buffer, unsigned long adder)
+uint64_t _format_adder(char *buffer, uint64_t adder)
 {
   uint64_t len = 0;
-  const char hex_chars[] = "0123456789ABCDEF";
+  const char hex_uint8_ts[] = "0123456789ABCDEF";
   bool found_first_non_zero = false;
   buffer[len++] = '0';
   buffer[len++] = 'x';
   for (int32_t i = sizeof(adder) * 8 - 4; i >= 0; i -= 4)
   {
-    unsigned long digit = (adder >> i) & 0xf;
+    uint64_t digit = (adder >> i) & 0xf;
     if (digit != 0 && !found_first_non_zero)
     {
       found_first_non_zero = true;
     }
     if (found_first_non_zero)
     {
-      buffer[len++] = hex_chars[digit];
+      buffer[len++] = hex_uint8_ts[digit];
     }
   }
 
@@ -44,13 +44,13 @@ static uint64_t _format_adder(char *buffer, unsigned long adder)
 
 static void _print_zone_info_t(zone_info_t *zone)
 {
-  char buffer[200] = {0};
+  char buffer[300] = {0};
   const char zone_type[3][9] = {"TINY : ", "SMALL : ", "LARGE : "};
   uint64_t zone_len = ft_strlen(zone_type[zone->alloc_type]);
 
   ft_memcpy(buffer, zone_type[zone->alloc_type], zone_len);
 
-  uint64_t adder_len = _format_adder(buffer + zone_len, (unsigned long)zone);
+  uint64_t adder_len = _format_adder(buffer + zone_len, (uint64_t)zone);
 
   buffer[zone_len + adder_len] = '\n';
 
@@ -95,11 +95,11 @@ static uint64_t _print_alloc(zone_info_t *zone)
   while (head)
   {
     max_size += head->capacity;
-    char buffer[200] = {0};
+    char buffer[300] = {0};
     uint64_t buffer_len = 0;
-    _format_adder(buffer, (unsigned long)head->chunk);
+    _format_adder(buffer, (uint64_t)head->chunk);
     buffer_len = ft_strlcat(buffer, " - ", sizeof(buffer));
-    _format_adder(buffer + buffer_len, (unsigned long)(head->chunk + head->capacity));
+    _format_adder(buffer + buffer_len, (uint64_t)(head->chunk + head->capacity));
     buffer_len = ft_strlcat(buffer, " : ", sizeof(buffer));
     buffer_len += _format_size_as_bytes(buffer + buffer_len, head->capacity);
     ft_memcpy(buffer + buffer_len, " bytes\n", 7);
@@ -115,7 +115,7 @@ void show_alloc_mem()
 {
   if (0 != pthread_mutex_lock(&_mutex_lock))
   {
-    _abort_program("Failed to lock Allocation Mutex");
+    _abort_program("Failed to lock Allocation Mutex", NULL);
     return;
   }
   uint64_t min_zone_adder = 0;
@@ -132,6 +132,6 @@ void show_alloc_mem()
   write(1, " bytes\n", 7);
   if (0 != pthread_mutex_unlock(&_mutex_lock))
   {
-    _abort_program("Failed to unlock Allocation Mutex");
+    _abort_program("Failed to unlock Allocation Mutex", NULL);
   }
 }

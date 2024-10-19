@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "libft.h"
-#include <stdio.h>
 
 t_list *ft_lstnew(void *chunk)
 {
@@ -19,7 +18,7 @@ t_list *ft_lstnew(void *chunk)
 	head = (t_list *)malloc(sizeof(*head));
 	if (!head)
 		return (NULL);
-	head->chunk = chunk;
+	head->content = chunk;
 	head->next = NULL;
 	return (head);
 }

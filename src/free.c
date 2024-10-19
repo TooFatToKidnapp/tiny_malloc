@@ -6,7 +6,7 @@
  */
 static bool is_only_zone_with_type(e_zone type)
 {
-  u_int64_t count = 0;
+  uint64_t count = 0;
   zone_info_t *zone = _mem_pool.pool;
   while (zone && zone->next)
   {
@@ -16,7 +16,7 @@ static bool is_only_zone_with_type(e_zone type)
     }
     zone = zone->next;
   }
-  return count <= 1;
+  return count == 1;
 }
 
 void free(void *ptr)
@@ -26,24 +26,24 @@ void free(void *ptr)
 
   if (0 != pthread_mutex_lock(&_mutex_lock))
   {
-    _abort_program("Failed to lock Allocation Mutex");
+    _abort_program("Failed to lock Allocation Mutex", NULL);
     return;
   }
 
   zone_info_t *zone = _find_ptr_mem_zone(_mem_pool.pool, ptr);
   alloc_info_t *ptr_alloc = _find_ptr_mem_alloc(zone, ptr);
 
-  if (!ptr_alloc)
+  if (ptr_alloc == NULL)
   {
     if (0 != pthread_mutex_unlock(&_mutex_lock))
     {
-      _abort_program("Failed to unlock Allocation Mutex");
+      _abort_program("Failed to unlock Allocation Mutex", NULL);
     }
-    _abort_program("Free: the passed in pointer was not allocated");
+    _abort_program("Free: the passed in pointer was not allocated", ptr);
     return;
   }
 
-  u_int64_t zone_size = _get_zone_mem_size(zone->alloc_pool->size, zone->alloc_type);
+  uint64_t zone_size = _get_zone_mem_size(zone->alloc_pool->size, zone->alloc_type);
 
   if (ptr_alloc->prev)
   {
@@ -65,6 +65,7 @@ void free(void *ptr)
 
   if (zone->free_mem_size == zone_size - sizeof(zone_info_t) && (zone->alloc_type == large || !is_only_zone_with_type(zone->alloc_type)))
   {
+
     if (zone->prev)
     {
       zone->prev->next = zone->next;
@@ -83,12 +84,12 @@ void free(void *ptr)
     }
     if (0 > munmap((void *)zone, zone_size))
     {
-      _abort_program("Failed to unmap memory");
+      _abort_program("Failed to unmap memory", NULL);
     }
   }
   if (0 != pthread_mutex_unlock(&_mutex_lock))
   {
-    _abort_program("Failed to unlock Allocation Mutex");
+    _abort_program("Failed to unlock Allocation Mutex", NULL);
   }
   return;
 }

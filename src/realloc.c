@@ -3,7 +3,7 @@
 static void *_find_and_set_new_allocation(size_t size, size_t zone_size, zone_info_t *zone, alloc_info_t *alloc)
 {
 
-  char *next = NULL;
+  uint8_t *next = NULL;
 
   if (_set_zone_type(alloc->capacity) != _set_zone_type(size))
   {
@@ -12,7 +12,7 @@ static void *_find_and_set_new_allocation(size_t size, size_t zone_size, zone_in
 
   if (size >= alloc->capacity)
   {
-    next = (char *)(((uint64_t)alloc->next * (alloc->next != NULL)) * (((uint64_t)(char *)zone + zone_size) * (alloc->next == NULL)));
+    next = (uint8_t *)(((uint64_t)alloc->next * (alloc->next != NULL)) * (((uint64_t)(uint8_t *)zone + zone_size) * (alloc->next == NULL)));
     if ((uint64_t)next <= (uint64_t)alloc->chunk + size)
       return NULL;
   }
@@ -20,7 +20,7 @@ static void *_find_and_set_new_allocation(size_t size, size_t zone_size, zone_in
   _update_free_mem_size(zone_size, zone);
   if (0 != pthread_mutex_unlock(&_mutex_lock))
   {
-    _abort_program("Failed to unlock Allocation Mutex");
+    _abort_program("Failed to unlock Allocation Mutex", NULL);
   }
   return alloc->chunk;
 }
@@ -40,7 +40,7 @@ void *realloc(void *ptr, size_t size)
   size = (size + 15) & ~15;
   if (0 != pthread_mutex_lock(&_mutex_lock))
   {
-    _abort_program("Failed to lock Allocation Mutex");
+    _abort_program("Failed to lock Allocation Mutex", NULL);
     return NULL;
   }
   zone_info_t *zone = _find_ptr_mem_zone(_mem_pool.pool, ptr);
@@ -49,17 +49,17 @@ void *realloc(void *ptr, size_t size)
   {
     if (0 != pthread_mutex_unlock(&_mutex_lock))
     {
-      _abort_program("Failed to unlock Allocation Mutex");
+      _abort_program("Failed to unlock Allocation Mutex", NULL);
       return NULL;
     }
-    _abort_program("Realloc: the passed in pointer was not allocated");
+    _abort_program("Realloc: the passed in pointer was not allocated", ptr);
     return NULL;
   }
   else if (size == ptr_alloc->capacity)
   {
     if (0 != pthread_mutex_unlock(&_mutex_lock))
     {
-      _abort_program("Failed to unlock Allocation Mutex");
+      _abort_program("Failed to unlock Allocation Mutex", NULL);
     }
     return ptr;
   }
@@ -75,7 +75,7 @@ void *realloc(void *ptr, size_t size)
   {
     if (0 != pthread_mutex_unlock(&_mutex_lock))
     {
-      _abort_program("Failed to unlock Allocation Mutex");
+      _abort_program("Failed to unlock Allocation Mutex", NULL);
       return NULL;
     }
     client_ptr = malloc(size);
@@ -85,7 +85,7 @@ void *realloc(void *ptr, size_t size)
 
   if (0 != pthread_mutex_lock(&_mutex_lock))
   {
-    _abort_program("Failed to lock Allocation Mutex");
+    _abort_program("Failed to lock Allocation Mutex", NULL);
     return NULL;
   }
 
@@ -95,7 +95,7 @@ void *realloc(void *ptr, size_t size)
 
   if (0 != pthread_mutex_unlock(&_mutex_lock))
   {
-    _abort_program("Failed to unlock Allocation Mutex");
+    _abort_program("Failed to unlock Allocation Mutex", NULL);
     return NULL;
   }
 

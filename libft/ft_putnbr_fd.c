@@ -12,26 +12,13 @@
 
 #include "libft.h"
 
-static size_t	ft_module_fd(size_t n)
-{
-	if (n < 0)
-		return (n * (-1));
-	else
-		return (n);
-}
-
 void	ft_putnbr_fd(size_t n, int fd)
 {
-	size_t	num;
-
-	if (n < 0)
-		ft_putchar_fd('-', fd);
-	num = ft_module_fd(n);
-	if (num >= 10)
+	if (n >= 10)
 	{
-		ft_putnbr_fd(num / 10, fd);
-		ft_putnbr_fd(num % 10, fd);
+		ft_putnbr_fd(n / 10, fd);
+		ft_putnbr_fd(n % 10, fd);
 	}
 	else
-		ft_putchar_fd(num + '0', fd);
+		ft_putchar_fd(n + '0', fd);
 }

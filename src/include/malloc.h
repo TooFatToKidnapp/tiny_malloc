@@ -11,30 +11,31 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <assert.h>
-#define TINY_ZONE 11
-#define SMALL_ZONE 111
+#include <signal.h>
 
-// #define INFO(format, ...)                                      \
-//   fprintf(stderr, "---- %s:%d: ------\n", __FILE__, __LINE__); \
-//   fprintf(stderr, format, __VA_ARGS__);                        \
-//   fprintf(stderr, "------------------\n");
+#define TINY_ZONE 32
+#define SMALL_ZONE 512
 
 void __attribute__((constructor)) _init_leak_handler(void);
+void __attribute__((destructor)) _clear(void);
 
-typedef enum dbg_env {
+typedef enum dbg_env
+{
   DBG_ENV_ABORT_ON_ERR = 1 << 0,
   DBG_ENV_SHOW_LEAKS = 1 << 1,
 } dbg_env_e;
 
-#define PUBLIC __attribute__ ((visibility ("default")))
+#define PUBLIC __attribute__((visibility("default")))
 
-typedef enum zone {
+typedef enum zone
+{
   tiny,
   small,
   large
 } e_zone;
 
-typedef struct alloc_info_s {
+typedef struct alloc_info_s
+{
   struct alloc_info_s *next;
   struct alloc_info_s *prev;
   void *chunk;
@@ -42,7 +43,8 @@ typedef struct alloc_info_s {
   uint64_t capacity;
 } alloc_info_t;
 
-typedef struct zone_info_s {
+typedef struct zone_info_s
+{
   alloc_info_t *alloc_pool;
   e_zone alloc_type;
   struct zone_info_s *prev;
@@ -50,7 +52,8 @@ typedef struct zone_info_s {
   uint64_t free_mem_size;
 } zone_info_t;
 
-typedef struct pool_s {
+typedef struct pool_s
+{
   zone_info_t *pool;
   uint64_t tiny_zone_max_size;
   uint64_t small_zone_max_size;
@@ -65,7 +68,6 @@ PUBLIC void *realloc(void *ptr, size_t size);
 PUBLIC void *calloc(size_t count, size_t size);
 PUBLIC void show_alloc_mem();
 
-
 void _init_global_mem_pool();
 e_zone _set_zone_type(uint64_t size);
 zone_info_t *_get_alloc_zone(uint64_t size, e_zone zone_type);
@@ -77,8 +79,9 @@ void _update_free_mem_size(uint64_t zone_size, zone_info_t *zone);
 zone_info_t *_find_ptr_mem_zone(zone_info_t *pool, void *ptr);
 alloc_info_t *_find_ptr_mem_alloc(zone_info_t *zone, void *ptr);
 
-bool  _is_dbg_env_set(dbg_env_e env);
-void _abort_program(const char *reason);
+uint64_t _format_adder(char *buffer, uint64_t adder);
+bool _is_dbg_env_set(dbg_env_e env);
+void _abort_program(const char *reason, void *ptr);
 void _init_leak_handler(void);
-
+void _clear(void);
 #endif
