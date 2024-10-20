@@ -26,6 +26,8 @@ INC = $(addprefix -I, $(LIBFT_INCLUDE) $(SRC_INCLUDE))
 
 SRC = $(addprefix $(SRC_PATH)/, malloc.c free.c realloc.c init.c show_alloc_mem.c calloc.c dbg_env_handler.c reallocf.c)
 
+INCLUDE_FILES = $(wildcard $(SRC_INCLUDE)/include/*.h $(LIBFT_INCLUDE)/*.h)
+
 OBJ = $(SRC:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
 
 all : creat_obj_dir $(NAME)
@@ -37,7 +39,7 @@ $(NAME): $(LIBFT) $(OBJ)
 $(LIBFT):
 	@make -C $(LIBFT_PATH)
 
-$(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
+$(OBJ_PATH)/%.o : $(SRC_PATH)/%.c $(INCLUDE_FILES)
 	$(CC) $(CCFLAGS) $(INC) -c $< -o $@
 
 
