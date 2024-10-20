@@ -22,7 +22,7 @@ static zone_info_t *_get_smallest_address_zone(uint64_t *adder)
 uint64_t _format_adder(char *buffer, uint64_t adder)
 {
   uint64_t len = 0;
-  const char hex_uint8_ts[] = "0123456789ABCDEF";
+  const char hex_chars[] = "0123456789ABCDEF";
   bool found_first_non_zero = false;
   buffer[len++] = '0';
   buffer[len++] = 'x';
@@ -35,7 +35,7 @@ uint64_t _format_adder(char *buffer, uint64_t adder)
     }
     if (found_first_non_zero)
     {
-      buffer[len++] = hex_uint8_ts[digit];
+      buffer[len++] = hex_chars[digit];
     }
   }
 

@@ -18,14 +18,14 @@
 
 void __attribute__((constructor)) _init_leak_handler(void);
 void __attribute__((destructor)) _clear(void);
+#define PUBLIC __attribute__((visibility("default")))
 
 typedef enum dbg_env
 {
   DBG_ENV_ABORT_ON_ERR = 1 << 0,
   DBG_ENV_SHOW_LEAKS = 1 << 1,
+  DBG_ENV_CLEAR_LEAKS = 1 << 2,
 } dbg_env_e;
-
-#define PUBLIC __attribute__((visibility("default")))
 
 typedef enum zone
 {
@@ -62,10 +62,11 @@ typedef struct pool_s
 extern pool_t _mem_pool;
 extern pthread_mutex_t _mutex_lock;
 
-PUBLIC void free(void *ptr);
 PUBLIC void *malloc(size_t size);
 PUBLIC void *realloc(void *ptr, size_t size);
 PUBLIC void *calloc(size_t count, size_t size);
+PUBLIC void * reallocf(void *ptr, size_t size);
+PUBLIC void free(void *ptr);
 PUBLIC void show_alloc_mem();
 
 void _init_global_mem_pool();

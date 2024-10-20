@@ -78,31 +78,34 @@ void _init_leak_handler(void)
   }
 }
 
-// static void _clear_zones() {
-//   write(1, "Called clear zones\n", 19);
-//   zone_info_t * zones = _mem_pool.pool;
-//   while (zones) {
-//     zone_info_t * next = zones->next;
-//     uint64_t zone_size = _get_zone_mem_size(zones->alloc_pool->size, zones->alloc_type);
-//     write(1, "munmap zone size = ", 19);
-//     ft_putnbr_fd(zone_size, 1);
-//   write(1, "\n", 1);
-//     if (0 > munmap((void *)zones, zone_size))
-//     {
-//       _abort_program("Failed to unmap memory", NULL);
-//     }
-//     zones = next;
-//   }
-// }
-
-void _clear(void) {
-  if (_is_dbg_env_set(DBG_ENV_SHOW_LEAKS)) {
-    _show_program_leaks();
+static void _clear_zones()
+{
+  write(2, "LEAKS CLEARED\n", 14);
+  zone_info_t *zones = _mem_pool.pool;
+  while (zones)
+  {
+    zone_info_t *next = zones->next;
+    uint64_t zone_size = _get_zone_mem_size(zones->alloc_pool->size, zones->alloc_type);
+    if (0 > munmap((void *)zones, zone_size))
+    {
+      _abort_program("Failed to unmap memory", NULL);
+    }
+    zones = next;
   }
-  // _clear_zones();
-  // _mem_pool.pool = NULL;
 }
 
+void _clear(void)
+{
+  if (_is_dbg_env_set(DBG_ENV_SHOW_LEAKS))
+  {
+    _show_program_leaks();
+  }
+  if (_is_dbg_env_set(DBG_ENV_CLEAR_LEAKS))
+  {
+    _clear_zones();
+    _mem_pool.pool = NULL;
+  }
+}
 
 // print information about the error if the appropriate flag is set
 // this function doesn't return if the abort env is set
@@ -135,6 +138,8 @@ static const char *_dbg_env_to_string(dbg_env_e env)
     return "DBG_ENV_ABORT_ON_ERR";
   case DBG_ENV_SHOW_LEAKS:
     return "DBG_ENV_SHOW_LEAKS";
+  case DBG_ENV_CLEAR_LEAKS:
+    return "DBG_ENV_CLEAR_LEAKS";
   default:
     return "Unknown dbg_env_e value";
   }
@@ -164,6 +169,10 @@ bool _is_dbg_env_set(dbg_env_e env)
     if (true == _check_env_flag(DBG_ENV_SHOW_LEAKS))
     {
       dbg_env_status = dbg_env_status | DBG_ENV_SHOW_LEAKS;
+    }
+    if (true == _check_env_flag(DBG_ENV_CLEAR_LEAKS))
+    {
+      dbg_env_status = dbg_env_status | DBG_ENV_CLEAR_LEAKS;
     }
     is_init = true;
   }
