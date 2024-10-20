@@ -20,7 +20,7 @@ HEADER = libft.h
 
 CC = gcc
 
-CFLAGS = -Wall -Werror -Wextra -pedantic -fvisibility=hidden
+CFLAGS = -Wall -Werror -Wextra -pedantic -fvisibility=hidden #-g -fsanitize=address,undefined,integer
 
 SRC =	ft_memcpy.c\
 		ft_atoi.c\

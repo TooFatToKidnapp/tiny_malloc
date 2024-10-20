@@ -80,7 +80,6 @@ void _init_leak_handler(void)
 
 static void _clear_zones()
 {
-  write(2, "LEAKS CLEARED\n", 14);
   zone_info_t *zones = _mem_pool.pool;
   while (zones)
   {

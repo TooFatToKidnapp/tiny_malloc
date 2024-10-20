@@ -3,7 +3,7 @@
 static void *_find_and_set_new_allocation(size_t size, size_t zone_size, zone_info_t *zone, alloc_info_t *alloc)
 {
 
-  uint8_t **next = NULL;
+  uint8_t *next = NULL;
 
   if (_set_zone_type(alloc->capacity) != _set_zone_type(size))
   {
@@ -12,7 +12,7 @@ static void *_find_and_set_new_allocation(size_t size, size_t zone_size, zone_in
 
   if (size >= alloc->capacity)
   {
-    next = (uint8_t **)(((uint64_t)alloc->next * (alloc->next != NULL)) * (((uint64_t)(uint8_t **)zone + zone_size) * (alloc->next == NULL)));
+    next = (uint8_t *)(((uint64_t)alloc->next * (alloc->next != NULL)) * (((uint64_t)(uint8_t *)zone + zone_size) * (alloc->next == NULL)));
     if ((uint64_t)next <= (uint64_t)alloc->chunk + size)
       return NULL;
   }

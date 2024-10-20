@@ -6,7 +6,7 @@ NAME = libft_malloc_$(HOSTTYPE).so
 
 L_NAME = libft_malloc.so
 
-CC = gcc #-g -fsanitize=address,undefined
+CC = gcc # -g -fsanitize=address,undefined,integer
 
 CCFLAGS = -fPIC -fvisibility=hidden
 

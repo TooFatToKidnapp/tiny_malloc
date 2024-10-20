@@ -135,17 +135,17 @@ void _update_free_mem_size(uint64_t zone_size, zone_info_t *zone)
   }
   for (; head->next; head = head->next)
   {
-    offset = (uint8_t **)head->next - ((uint8_t **)head->chunk + head->size);
+    offset = (uint8_t *)head->next - ((uint8_t *)head->chunk + head->size);
     new_free_size = (new_free_size * (offset <= new_free_size)) + (offset * (offset > new_free_size));
   }
-  offset = ((uint8_t **)zone + zone_size) - ((uint8_t **)head->chunk + head->size);
+  offset = ((uint8_t *)zone + zone_size) - ((uint8_t *)head->chunk + head->size);
   new_free_size = (new_free_size * (offset <= new_free_size)) + (offset * (offset > new_free_size));
   zone->free_mem_size = new_free_size;
 }
 
 zone_info_t *_find_ptr_mem_zone(zone_info_t *pool, void *ptr)
 {
-  uint8_t **zone_border;
+  uint8_t *zone_border;
   zone_info_t *zone = pool;
 
   for (; zone; zone = zone->next)
@@ -154,8 +154,8 @@ zone_info_t *_find_ptr_mem_zone(zone_info_t *pool, void *ptr)
     {
       continue;
     }
-    zone_border = (uint8_t **)zone + _get_zone_mem_size(zone->free_mem_size, zone->alloc_type);
-    if (ptr >= (void *)((alloc_info_t *)(zone + 1) + 1) && (uint8_t **)ptr < zone_border)
+    zone_border = (uint8_t *)zone + _get_zone_mem_size(zone->free_mem_size, zone->alloc_type);
+    if (ptr >= (void *)((alloc_info_t *)(zone + 1) + 1) && (uint8_t *)ptr < zone_border)
     {
       return zone;
     }
