@@ -80,6 +80,7 @@ void _init_leak_handler(void)
 
 static void _clear_zones()
 {
+  write(2, "Clearing left over memory...\n", 29);
   zone_info_t *zones = _mem_pool.pool;
   while (zones)
   {
