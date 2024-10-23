@@ -49,7 +49,7 @@ static void _show_program_leaks()
     }
     char buff[300] = {0};
     uint32_t buff_len = 0;
-    buff_len += ft_strlcat(buff, "\n**** Program Memory Leak Info ****\n", sizeof(buff));
+    buff_len += ft_strlcat(buff, "**** Program Memory Leak Info ****\n", sizeof(buff));
     buff_len += ft_strlcat(buff + buff_len, "Total allocations: ", sizeof(buff));
     buff_len += _append_number_to_str(buff + buff_len, allocation_count);
     buff_len += ft_strlcat(buff + buff_len, "\n", sizeof(buff));
@@ -85,6 +85,10 @@ static void _clear_zones()
   while (zones)
   {
     zone_info_t *next = zones->next;
+    if (zones->alloc_pool == NULL) {
+      zones = next;
+      continue;
+    }
     uint64_t zone_size = _get_zone_mem_size(zones->alloc_pool->size, zones->alloc_type);
     if (0 > munmap((void *)zones, zone_size))
     {
@@ -92,6 +96,7 @@ static void _clear_zones()
     }
     zones = next;
   }
+  write(2, "Done!\n", 6);
 }
 
 void _clear(void)

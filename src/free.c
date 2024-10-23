@@ -4,7 +4,7 @@
  * check's of there is only one zone with the passed in type
  * only for small and tiny types
  */
-static bool is_only_zone_with_type(e_zone type)
+static bool is_only_one_or_less_zone_with_type(e_zone type)
 {
   uint64_t count = 0;
   zone_info_t *zone = _mem_pool.pool;
@@ -16,7 +16,7 @@ static bool is_only_zone_with_type(e_zone type)
     }
     zone = zone->next;
   }
-  return count == 1;
+  return count <= 1;
 }
 
 void free(void *ptr)
@@ -63,7 +63,7 @@ void free(void *ptr)
   }
   _update_free_mem_size(zone_size, zone);
 
-  if (zone->free_mem_size == zone_size - sizeof(zone_info_t) && (zone->alloc_type == large || !is_only_zone_with_type(zone->alloc_type)))
+  if (zone->free_mem_size == zone_size - sizeof(zone_info_t) && (zone->alloc_type == large || !is_only_one_or_less_zone_with_type(zone->alloc_type)))
   {
 
     if (zone->prev)
